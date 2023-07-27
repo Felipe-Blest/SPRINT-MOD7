@@ -1,10 +1,10 @@
 import express from 'express'
-
+import { GET, POST, DELETE, PUT } from '../controllers/usuario.js'
 const router = express.Router()
 
-router.get('/', getUsuarios)
-router.post('/usuario/id', nuevoUsuario)
-router.delete('/usuario/:id', eliminarUsuario)
-router.put('usuario/:id', editUsuario)
+router.get('/', GET)
+router.post('/usuario/id', POST)
+router.delete('/usuario/:id', DELETE)
+router.put('usuario/:id', PUT)
 
 export default router;

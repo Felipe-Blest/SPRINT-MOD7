@@ -21,10 +21,10 @@
           <hr class="bg-white w-50" />
           <div class="d-flex align-items-center justify-content-center">
             Nombre:
-            <input class="form-control d-inline mx-3" required />
+            <input id="nombre-form1" class="form-control d-inline mx-3" required />
             Balance:
-            <input class="form-control d-inline mx-3" required />
-            <button type="submit" class="btn btn-danger">Agregar</button>
+            <input id="balance-form1" class="form-control d-inline mx-3" required />
+            <button type="button" class="btn btn-danger" onclick="nuevoUsuario()">Agregar</button>
           </div>
         </div>
       </form>
@@ -53,7 +53,7 @@
               <input type="text" class="form-control mx-2 w-auto d-inline" id="monto" />
             </div>
 
-            <button type="submit" class="btn btn-danger">Relalizar</button>
+            <button type="button" class="btn btn-danger" onclick="nuevaTransferencia()">Realizar</button>
           </div>
         </div>
       </form>
@@ -169,7 +169,7 @@
     $("#editButton").attr("onclick", `editUsuario('${id}')`);
   };
 
-  const editUsuario = async (id) => {
+  <!-- const editUsuario = async (id) => {
     const name = $("#nombreEdit").val();
     const balance = $("#balanceEdit").val();
     try {
@@ -186,8 +186,6 @@
       alert("Algo salió mal..." + e);
     }
   };
-
-
 
   const nuevoUsuario = (async (e) => {
     e.preventDefault();
@@ -298,5 +296,6 @@
     const timeFormat = moment(date).format("LTS");
     return `${dateFormat} ${timeFormat}`;
   };
-  formatDate();
+  formatDate(); -->
+  
 </script>
