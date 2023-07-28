@@ -1,5 +1,4 @@
 import pkg from 'pg'
-
 const { Client } = pkg
 
 //cambie las variables según corresponda
@@ -22,7 +21,7 @@ const crearBD = async () => {
             host: 'localhost',
             password: 'gameover',
             port: 5432,
-            database: 'SPRINT7_GRUPO1'
+            database: 'sprint7_grupo1'
         })
         try {
             await BDsprint.connect()
@@ -45,7 +44,6 @@ const crearBD = async () => {
     }
     finally {
         client.end()
-        console.log('BD CREADA')
     }
 }
 

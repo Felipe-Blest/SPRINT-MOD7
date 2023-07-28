@@ -1,9 +1,8 @@
 import express from 'express'
-import { GET, POST } from '../controllers/transferencias.js'
-
+import { getTransferencias, postTransferencias } from '../db/db.js'
 const router = express.Router()
 
-router.get('/transferencias', GET)
-router.post('/transferencia', POST)
+router.get('/transferencias', getTransferencias)
+router.post('/transferencia', postTransferencias)
 
 export default router;
