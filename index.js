@@ -10,6 +10,8 @@ import {
     postTransferencias
 } from './db/db.js'
 
+
+
 const { Pool } = pkg
 const app = express()
 
@@ -17,6 +19,14 @@ const app = express()
 app.use(express.json())
 app.use(cors())
 app.use(express.static('public'))
+
+const corsOptions = {
+    origin: 'http://localhost:3000',
+    optionsSuccessStatus: 200
+};
+
+app.use(cors(corsOptions));
+
 
 
 const BD = new Pool({
@@ -33,21 +43,36 @@ app.get('/usuarios', async (req, res) => {
 })
 
 app.post('/usuario', async (req, res) => {
-    const usuario = req.body
-    await postUsuario(usuario)
-})
+    const usuario = req.body;
+    await postUsuario(usuario);
+    res.send('Usuario creado exitosamente');
+
+});
 
 app.put('/usuario/:id', async (req, res) => {
     const usuario = req.body
+    console.log(usuario)
     const actualizar = await putUsuario(usuario)
     res.send(actualizar)
 })
 
+// app.delete('/usuario/:id', async (req, res) => {
+//     const { id } = req.params
+//     await deleteUsuario(id)
+//     res.send('Usuario eliminado')
+// })
+
+
 app.delete('/usuario/:id', async (req, res) => {
-    const { id } = req.params
-    await deleteUsuario(id)
-    res.send('Usuario eliminado')
-})
+    const id = req.params.id;
+    try {
+        const resultado = await deleteUsuario(id);
+        res.status(200).json({ mensaje: 'Usuario eliminado correctamente', resultado });
+    } catch (error) {
+        res.status(500).json({ error: 'Error al eliminar el usuario.' });
+    }
+});
+
 
 app.get('/transferencias', async (req, res) => {
     const transferencias = await getTransferencias()
@@ -70,3 +95,4 @@ BD.connect()
 const server = app.listen(3000, () => {
     console.log('SERVIDOR LEVANTADO EN PUERTO 3000');
 });
+

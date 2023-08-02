@@ -21,12 +21,15 @@
           <hr class="bg-white w-50" />
           <div class="d-flex align-items-center justify-content-center">
             Nombre:
-            <input class="form-control d-inline mx-3" required />
+            <input id="nombree" name="nombre" class="form-control d-inline mx-3" required />
+            <!-- Agregar el atributo name -->
             Balance:
-            <input class="form-control d-inline mx-3" required />
+            <input id="balancee" name="balance" class="form-control d-inline mx-3" required />
+            <!-- Agregar el atributo name -->
             <button type="submit" class="btn btn-danger">Agregar</button>
           </div>
         </div>
+
       </form>
       <br />
     </div>
@@ -50,10 +53,10 @@
             <div class="mr-3">
               Monto:
 
-              <input type="text" class="form-control mx-2 w-auto d-inline" id="monto" />
+              <input id="monto" type="text" class="form-control mx-2 w-auto d-inline" />
             </div>
 
-            <button type="submit" class="btn btn-danger">Relalizar</button>
+            <button type="submit" class="btn btn-danger">Realizar</button>
           </div>
         </div>
       </form>
@@ -150,6 +153,7 @@
 
 </html>
 
+
 <style>
   body {
     background: #e5e1dd;
@@ -162,26 +166,31 @@
   }
 </style>
 
+
+
 <script>
+
   const setInfoModal = (nombre, balance, id) => {
     $("#nombreEdit").val(nombre);
     $("#balanceEdit").val(balance);
     $("#editButton").attr("onclick", `editUsuario('${id}')`);
+
   };
 
   const editUsuario = async (id) => {
-    const name = $("#nombreEdit").val();
-    const balance = $("#balanceEdit").val();
+
+    const nombre = document.getElementById('nombreEdit').value;
+    const balance = document.getElementById('balanceEdit').value;
+    const putUsuario = {
+      nombre: `${nombre}`,
+      balance: `${balance}`,
+      id: `${id}`
+    };
+    console.log(nombre, balance, id)
     try {
-      const { data } = await axios.put(
-        `http://localhost:3000/usuario?id=${id}`,
-        {
-          name,
-          balance,
-        }
-      );
+      axios.put(`http://localhost:3000/usuario/${id}`, putUsuario);
       $("#exampleModal").modal("hide");
-      location.reload();
+      //  location.reload();
     } catch (e) {
       alert("Algo salió mal..." + e);
     }
@@ -189,52 +198,74 @@
 
   $("form:first").submit(async (e) => {
     e.preventDefault();
-    let nombre = $("form:first input:first").val();
-    let balance = Number($("form:first input:nth-child(2)").val());
-    console.log("Nombre:", nombre);
-    console.log("Balance:", balance);
+
+    //tomamos los datos con un getElementById desde el form.
+    const nombre = document.getElementById('nombree').value;
+    const balance = document.getElementById('balancee').value;
+
+    //pasamos los datos a un objeto, para luego llamarlos con axios
+    const nuevoUsuario = {
+      nombre: `${nombre}`,
+      balance: `${balance}`
+    };
 
     try {
-      const response = await fetch("http://localhost:3000/usuario", {
-        method: "post",
-        body: JSON.stringify({
-          nombre,
-          balance,
+
+      //mediante la url, le pasamos los datos a la bd.
+      axios.post("http://localhost:3000/usuario", nuevoUsuario)
+        .then((response) => {
+          console.log(response);
+          console.log('Usuario agregado correctamente');
         }),
-      });
-      $("form:first input:first").val("");
-      $("form:first input:nth-child(2)").val("");
+
+
+
+        //limpiamos los input para ingresar un nuevo usuario proximamente.
+
+        $("form:first input[name='nombre']").val("");
+      $("form:first input[name='balance']").val("");
+      //   console.log("saliendo del try");
       location.reload();
     } catch (e) {
       alert("Algo salió mal ..." + e);
     }
   });
 
+
+
   $("form:last").submit(async (e) => {
     e.preventDefault();
-    let emisor = $("form:last select:first").val();
-    let receptor = $("form:last select:last").val();
-    let monto = $("#monto").val();
+    const emisor = document.getElementById('emisor').value;
+    const receptor = document.getElementById('receptor').value;
+    const monto = document.getElementById('monto').value;
+    const nuevoTransaccion = {
+      emisor: `${emisor}`,
+      receptor: `${receptor}`,
+      monto: `${monto}`
+    };
+
+
+
     if (!monto || !emisor || !receptor) {
       alert("Debe seleccionar un emisor, receptor y monto a transferir");
       return false;
     }
     try {
-      const response = await fetch("http://localhost:3000/transferencia", {
-        method: "post",
-        body: JSON.stringify({
-          emisor,
-          receptor,
-          monto,
-        }),
-      });
-      const data = await response.json();
-      location.reload();
+      // const response = await fetch("http://localhost:3000/transferencia", {
+      axios.post("http://localhost:3000/transferencia", nuevoTransaccion)
+        .then((response) => {
+          console.log(response);
+          console.log('Transaccion generada correctamente');
+        })
+
+      //  location.reload();
     } catch (e) {
       console.log(e);
       alert("Algo salió mal..." + e);
     }
   });
+
+
 
   const getUsuarios = async () => {
     const response = await fetch("http://localhost:3000/usuarios");
@@ -247,29 +278,46 @@
                 <td>${c.nombre}</td>
                 <td>${c.balance}</td>
                 <td>
-                  <button
-                    class="btn btn-warning mr-2"
-                    data-toggle="modal"
-                    data-target="#exampleModal"
-                    onclick="setInfoModal('${c.nombre}', '${c.balance}', '${c.id}')"
-                  >
-                    Editar</button
-                  ><button class="btn btn-danger" onclick="eliminarUsuario('${c.id}')">Eliminar</button>
+                  <button class="btn btn-warning mr-2" data-toggle="modal" data-target="#exampleModal" onclick="setInfoModal('${c.nombre}', '${c.balance}', '${c.id}')">Editar</button>
+ 
+                   <button class="btn btn-danger" onclick="eliminarUsuario('${c.id}')">Eliminar</button>
                 </td>
               </tr>
          `);
 
-      $("#emisor").append(`<option value="${c.nombre}">${c.nombre}</option>`);
-      $("#receptor").append(`<option value="${c.nombre}">${c.nombre}</option>`);
+      $("#emisor").append(`<option value="${c.id}">${c.nombre}</option>`);
+      $("#receptor").append(`<option value="${c.id}">${c.nombre}</option>`);
     });
   };
 
+
+
+  //const eliminarUsuario = async (id) => {
+  // const response = await fetch(`http://localhost:3000/usuario?id=${id}`, {
+  //  method: "DELETE",
+  //});
+  //getUsuarios();
+  // };
+
+
+  // Frontend - JavaScript
   const eliminarUsuario = async (id) => {
-    const response = await fetch(`http://localhost:3000/usuario?id=${id}`, {
-      method: "DELETE",
-    });
-    getUsuarios();
+    try {
+      const response = await fetch(`http://localhost:3000/usuario/${id}`, {
+        method: "DELETE",
+      });
+      if (response.ok) {
+        console.log("Usuario eliminado correctamente.");
+        getUsuarios(); // Actualizar la lista de usuarios después de eliminar.
+      } else {
+        console.error("Error al eliminar el usuario.");
+      }
+    } catch (error) {
+      console.error("Error de conexión:", error);
+    }
   };
+
+
 
   const getTransferencias = async () => {
     const { data } = await axios.get("http://localhost:3000/transferencias");
@@ -287,8 +335,12 @@
     });
   };
 
+
+
   getUsuarios();
   getTransferencias();
+
+
 
   const formatDate = (date) => {
     const dateFormat = moment(date).format("L");
