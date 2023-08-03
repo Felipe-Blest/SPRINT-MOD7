@@ -297,14 +297,13 @@
   const getTransferencias = async () => {
     const { data } = await axios.get("http://localhost:3000/transferencias");
     $(".transferencias").html("");
-    console.log(data[0])
     data.forEach((t) => {
       $(".transferencias").append(`
        <tr>
-         <td> ${data[0].fecha} </td>
-         <td> ${data[0].emisor} </td>
-         <td> ${data[0].receptor} </td>
-         <td> ${data[0].monto} </td>
+         <td> ${formatDate(t.fecha)} </td>
+         <td> ${t.emisor} </td>
+         <td> ${t.receptor} </td>
+         <td> ${t.monto} </td>
        </tr>
      `);
     });

@@ -9,8 +9,6 @@ const BD = new Pool({
   database: 'sprint7_grupo1'
 });
 
-
-
 export const postUsuario = async (usuario) => {
   try {
     const { nombre, balance } = usuario;
@@ -40,9 +38,6 @@ export const deleteUsuario = async (id) => {
   }
 };
 
-
-
-
 export const putUsuario = async (usuario) => {
   const { nombre, balance, id } = usuario;
   try {
@@ -53,8 +48,6 @@ export const putUsuario = async (usuario) => {
   }
 };
 
-
-// Cambia esta línea para asegurarte de que el resultado sea un arreglo
 export const getTransferencias = async () => {
   try {
     const result = await BD.query('SELECT u1.nombre AS emisor, u2.nombre AS receptor, t.monto,t.fecha FROM transferencias t JOIN usuarios u1 ON t.emisor = u1.id JOIN usuarios u2 ON t.receptor = u2.id;');
@@ -68,7 +61,6 @@ export const getTransferencias = async () => {
     throw error;
   }
 };
-
 
 export const postTransferencias = async (transferencia) => {
   const { emisor, receptor, monto, fecha } = transferencia;
@@ -85,7 +77,6 @@ export const postTransferencias = async (transferencia) => {
   } finally {
     const query = `INSERT INTO transferencias (emisor, receptor, monto, fecha) VALUES ($1, $2, $3,$4)`
     const values = [emisor, receptor, monto, fecha]
-    // const insertarData = await BD.query(`INSERT INTO transferencias (emisor, receptor, monto, fecha) VALUES ($1, $2, $3, CURRENT_TIMESTAMP)`, [emisor, receptor, monto])
     await BD.query(query, values)
   }
 };

@@ -10,8 +10,6 @@ import {
     postTransferencias
 } from './db/db.js'
 
-
-
 const { Pool } = pkg
 const app = express()
 
@@ -26,8 +24,6 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-
-
 
 const BD = new Pool({
     user: 'postgres',
@@ -88,4 +84,3 @@ BD.connect()
 const server = app.listen(3000, () => {
     console.log('SERVIDOR LEVANTADO EN PUERTO 3000');
 });
-
