@@ -57,31 +57,35 @@ export const putUsuario = async (usuario) => {
 // Cambia esta línea para asegurarte de que el resultado sea un arreglo
 export const getTransferencias = async () => {
   try {
-    const result = await BD.query('SELECT * FROM transferencias');
-    return result.rows;
+    const result = await BD.query('SELECT u1.nombre AS emisor, u2.nombre AS receptor, t.monto,t.fecha FROM transferencias t JOIN usuarios u1 ON t.emisor = u1.id JOIN usuarios u2 ON t.receptor = u2.id;');
+    return result.rows.map((row) => ({
+      emisor: row.emisor,
+      receptor: row.receptor,
+      monto: row.monto,
+      fecha: row.fecha
+    }));
   } catch (error) {
     throw error;
   }
 };
 
 
-
-
 export const postTransferencias = async (transferencia) => {
-  const { emisor, receptor, monto } = transferencia;
+  const { emisor, receptor, monto, fecha } = transferencia;
   try {
     await BD.query('BEGIN');
-
-    const descontar = `UPDATE usuarios SET balance = balance - ${monto} WHERE nombre = '${emisor}'`;
+    const descontar = `UPDATE usuarios SET balance = balance - ${monto} WHERE id = '${emisor}'`;
     await BD.query(descontar);
-
-    const transaccion = `UPDATE usuarios SET balance = balance + ${monto} WHERE nombre = '${receptor}'`;
+    const transaccion = `UPDATE usuarios SET balance = balance + ${monto} WHERE id = '${receptor}'`;
     await BD.query(transaccion);
-
     await BD.query('COMMIT;');
-    const insertarData = `INSERT INTO (transferencias, emisor, receptor, monto, fecha)`
   } catch (error) {
     await BD.query('ROLLBACK');
     throw error;
+  } finally {
+    const query = `INSERT INTO transferencias (emisor, receptor, monto, fecha) VALUES ($1, $2, $3,$4)`
+    const values = [emisor, receptor, monto, fecha]
+    // const insertarData = await BD.query(`INSERT INTO transferencias (emisor, receptor, monto, fecha) VALUES ($1, $2, $3, CURRENT_TIMESTAMP)`, [emisor, receptor, monto])
+    await BD.query(query, values)
   }
 };

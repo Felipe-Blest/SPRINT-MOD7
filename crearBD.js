@@ -25,7 +25,6 @@ const crearBD = async () => {
         })
         try {
             await BDsprint.connect()
-            //Definir tablas de BD
             const tablaUsuario = `CREATE TABLE usuarios (id SERIAL PRIMARY KEY, nombre VARCHAR(50),
             balance FLOAT CHECK (balance >= 0));`
 

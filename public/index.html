@@ -190,7 +190,7 @@
     try {
       axios.put(`http://localhost:3000/usuario/${id}`, putUsuario);
       $("#exampleModal").modal("hide");
-      //  location.reload();
+      location.reload();
     } catch (e) {
       alert("Algo salió mal..." + e);
     }
@@ -198,12 +198,8 @@
 
   $("form:first").submit(async (e) => {
     e.preventDefault();
-
-    //tomamos los datos con un getElementById desde el form.
     const nombre = document.getElementById('nombree').value;
     const balance = document.getElementById('balancee').value;
-
-    //pasamos los datos a un objeto, para luego llamarlos con axios
     const nuevoUsuario = {
       nombre: `${nombre}`,
       balance: `${balance}`
@@ -211,20 +207,14 @@
 
     try {
 
-      //mediante la url, le pasamos los datos a la bd.
       axios.post("http://localhost:3000/usuario", nuevoUsuario)
         .then((response) => {
           console.log(response);
           console.log('Usuario agregado correctamente');
         }),
 
-
-
-        //limpiamos los input para ingresar un nuevo usuario proximamente.
-
         $("form:first input[name='nombre']").val("");
       $("form:first input[name='balance']").val("");
-      //   console.log("saliendo del try");
       location.reload();
     } catch (e) {
       alert("Algo salió mal ..." + e);
@@ -238,34 +228,31 @@
     const emisor = document.getElementById('emisor').value;
     const receptor = document.getElementById('receptor').value;
     const monto = document.getElementById('monto').value;
+    const fecha = moment().format('DD-MM-YYYY HH:mm:ss');
     const nuevoTransaccion = {
       emisor: `${emisor}`,
       receptor: `${receptor}`,
-      monto: `${monto}`
+      monto: `${monto}`,
+      fecha: `${fecha}`
     };
-
-
-
     if (!monto || !emisor || !receptor) {
       alert("Debe seleccionar un emisor, receptor y monto a transferir");
       return false;
     }
     try {
-      // const response = await fetch("http://localhost:3000/transferencia", {
       axios.post("http://localhost:3000/transferencia", nuevoTransaccion)
         .then((response) => {
           console.log(response);
           console.log('Transaccion generada correctamente');
         })
+      console.log(nuevoTransaccion)
 
-      //  location.reload();
+      location.reload();
     } catch (e) {
       console.log(e);
       alert("Algo salió mal..." + e);
     }
   });
-
-
 
   const getUsuarios = async () => {
     const response = await fetch("http://localhost:3000/usuarios");
@@ -290,16 +277,6 @@
     });
   };
 
-
-
-  //const eliminarUsuario = async (id) => {
-  // const response = await fetch(`http://localhost:3000/usuario?id=${id}`, {
-  //  method: "DELETE",
-  //});
-  //getUsuarios();
-  // };
-
-
   // Frontend - JavaScript
   const eliminarUsuario = async (id) => {
     try {
@@ -308,7 +285,7 @@
       });
       if (response.ok) {
         console.log("Usuario eliminado correctamente.");
-        getUsuarios(); // Actualizar la lista de usuarios después de eliminar.
+        getUsuarios();
       } else {
         console.error("Error al eliminar el usuario.");
       }
@@ -317,30 +294,24 @@
     }
   };
 
-
-
   const getTransferencias = async () => {
     const { data } = await axios.get("http://localhost:3000/transferencias");
     $(".transferencias").html("");
-
+    console.log(data[0])
     data.forEach((t) => {
       $(".transferencias").append(`
        <tr>
-         <td> ${formatDate(t[4])} </td>
-         <td> ${t[1]} </td>
-         <td> ${t[2]} </td>
-         <td> ${t[3]} </td>
+         <td> ${data[0].fecha} </td>
+         <td> ${data[0].emisor} </td>
+         <td> ${data[0].receptor} </td>
+         <td> ${data[0].monto} </td>
        </tr>
      `);
     });
   };
 
-
-
   getUsuarios();
   getTransferencias();
-
-
 
   const formatDate = (date) => {
     const dateFormat = moment(date).format("L");

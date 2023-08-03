@@ -56,13 +56,6 @@ app.put('/usuario/:id', async (req, res) => {
     res.send(actualizar)
 })
 
-// app.delete('/usuario/:id', async (req, res) => {
-//     const { id } = req.params
-//     await deleteUsuario(id)
-//     res.send('Usuario eliminado')
-// })
-
-
 app.delete('/usuario/:id', async (req, res) => {
     const id = req.params.id;
     try {
